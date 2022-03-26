@@ -33,13 +33,10 @@ public class Unchecked {
     SILENT_INVOKER_CALLABLE = si;
   }
 
-  public static <T> T call(Callable<T> callable) {
-    return SILENT_INVOKER_CALLABLE.invoke(callable);
-  }
 
   @FunctionalInterface
   public interface ThrowableConsumer<T> {
-    void accept(T t) throws Exception;
+    void accept() throws Exception;
   }
   @FunctionalInterface
   private interface SilentInvokerConsumer {
@@ -67,7 +64,38 @@ public class Unchecked {
     SILENT_INVOKER_CONSUMER = si;
   }
 
-  public static <T> Consumer<T> call(ThrowableConsumer<T> consumer) {
-    return arg -> SILENT_INVOKER_CONSUMER.invoke(consumer, arg);
+  @FunctionalInterface
+  public interface ThrowableRunnable {
+    MethodType SIGNATURE = MethodType.methodType(void.class);
+    void call() throws Exception;
+  }
+  @FunctionalInterface
+  private interface SilentInvokerRunnable {
+    MethodType SIGNATURE = MethodType.methodType(void.class, ThrowableRunnable.class);
+    void invoke(ThrowableRunnable fn);
+  }
+
+  private static final SilentInvokerRunnable SILENT_INVOKER_RUNNABLE;
+
+  static {
+    SilentInvokerRunnable si = null;
+    final MethodHandles.Lookup lookup = MethodHandles.lookup();
+    try {
+      final CallSite site = LambdaMetafactory.metafactory(lookup,
+                                                          "call",
+                                                          MethodType.methodType(SilentInvokerRunnable.class),
+                                                          SilentInvokerRunnable.SIGNATURE,
+                                                          lookup.findVirtual(ThrowableRunnable.class, "call", ThrowableRunnable.SIGNATURE),
+                                                          SilentInvokerRunnable.SIGNATURE);
+      si = (SilentInvokerRunnable) site.getTarget().invokeExact();
+    } catch (Throwable e) {
+      e.printStackTrace();
+      throw new Error();
+    }
+    SILENT_INVOKER_RUNNABLE = si;
+  }
+
+  public static void call(ThrowableRunnable fn) {
+    SILENT_INVOKER_RUNNABLE.invoke(fn);
   }
 }
