@@ -11,19 +11,19 @@ public interface Fn2<T1, T2, R> extends BiFunction<T1, T2, R> {
     return (t1, t2) -> op.apply(this.apply(t1, t2));
   }
 
-  default Fn1<T1, R> partialBack(T2 t2) {
+  default Fn1<T1, R> $$(T2 t2) {
     return (t1) -> this.apply(t1, t2);
   }
 
-  default Fn0<R> partialBack(T1 t1, T2 t2) {
+  default Fn0<R> $$(T1 t1, T2 t2) {
     return () -> this.apply(t1, t2);
   }
 
-  default Fn0<R> partial(T1 t1, T2 t2) {
+  default Fn0<R> __(T1 t1, T2 t2) {
     return () -> this.apply(t1, t2);
   }
 
-  default Fn1<T2, R> partial(T1 t1) {
+  default Fn1<T2, R> __(T1 t1) {
     return (t2) -> this.apply(t1, t2);
   }
 }

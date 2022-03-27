@@ -91,13 +91,13 @@ def __partialTemplate = (List memArgs, List nonMemArgs, String name = "partial",
 def partialTemplate = (List T, int argsCount) -> {
     var memArgs = T.subList(0, argsCount + 1)
     var nonMemArgs = T.subList(argsCount + 1, T.size())
-    return __partialTemplate(memArgs, nonMemArgs)
+    return __partialTemplate(memArgs, nonMemArgs, "__")
 }
 
 def partialBackTemplate = (List T, int argsCount) -> {
     var memArgs = T.subList(argsCount, T.size())
     var nonMemArgs = T.subList(0, argsCount)
-    return __partialTemplate(memArgs, nonMemArgs, "partialBack", true)
+    return __partialTemplate(memArgs, nonMemArgs, "\$\$", true)
 }
 
 def utilClassTemplate = (List T) -> {
@@ -109,7 +109,7 @@ def utilClassTemplate = (List T) -> {
                 def templates = asTemplates(push("R", it))
                 def _Fn = "Fn${it.size()}${templates}"
                 return """
-  static ${templates} ${_Fn} of(${_Fn} it) {
+  static ${templates} ${_Fn} fn(${_Fn} it) {
     return it;
   }"""
             })

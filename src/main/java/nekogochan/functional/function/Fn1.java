@@ -10,11 +10,11 @@ public interface Fn1<T1, R> extends Function<T1, R>{
     return (t1) -> op.apply(this.apply(t1));
   }
 
-  default Fn0<R> partialBack(T1 t1) {
+  default Fn0<R> $$(T1 t1) {
     return () -> this.apply(t1);
   }
 
-  default Fn0<R> partial(T1 t1) {
+  default Fn0<R> __(T1 t1) {
     return () -> this.apply(t1);
   }
 }

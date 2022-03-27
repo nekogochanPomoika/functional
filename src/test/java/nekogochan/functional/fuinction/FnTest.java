@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static nekogochan.functional.function.Fn.fn;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +18,7 @@ public class FnTest {
   void numbers() {
     var values = Stream.of(1, 2, 3, 4, 5, 6)
                        .map(Number::doubleValue)
-                       .map(Fn.of(Math::pow).partial(2.0))
+                       .map(fn(Math::pow).__(2.0))
                        .map(Number::intValue)
                        .collect(toList());
 
@@ -29,8 +30,7 @@ public class FnTest {
 
   @Test
   void cats() {
-    var blackCatConstructor = Fn.of(Cat::new)
-                                .partialBack("black", "green");
+    var blackCatConstructor = fn(Cat::new).$$("black", "green");
 
     var tomas = blackCatConstructor.apply("Tomas", 10);
     var shnurok = blackCatConstructor.apply("Shnurok", 4);
